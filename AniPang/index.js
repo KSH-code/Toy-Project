@@ -9,7 +9,6 @@ function init () {
       board[i].push(Math.floor(Math.random() * maxNumber + 1))
     }
   }
-  for (let i = 2; i < 5; i++) board[i][2] = 1
 }
 
 const yyyy = [0, 1, 0, -1]
