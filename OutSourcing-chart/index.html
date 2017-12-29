@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>외주에서 차트 사용!</title>
+    <style>
+        div {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+        div > span {
+            font-size: 15.6px;
+            font-weight: 500;
+            line-height: 0.63;
+            letter-spacing: -0.4px;
+            text-align: left;
+            color: #989898;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.1/Chart.bundle.min.js"></script>
+    <div>
+        <canvas id="donut-chart" height="100%" width="100%">
+        </canvas>
+        <span>43%</span>
+    </div>
+    <script>
+        Chart.defaults.RoundedDoughnut = Chart.helpers.clone(Chart.defaults.doughnut);
+        Chart.controllers.RoundedDoughnut = Chart.controllers.doughnut.extend({
+            draw: function (ease) {
+            		var ctx = this.chart.chart.ctx;
+                
+                var easingDecimal = ease || 1;
+                Chart.helpers.each(this.getDataset().metaData, function (arc, index) {
+                    arc.transition(easingDecimal).draw();
+
+                    var vm = arc._view;
+                    var radius = (vm.outerRadius + vm.innerRadius);
+                    var thickness = 2.4;
+                    var angle = Math.PI - vm.endAngle - Math.PI / 2;
+                    
+                    ctx.save();
+                    ctx.fillStyle = vm.backgroundColor;
+                    ctx.translate(vm.x, vm.y);
+                    ctx.beginPath();
+                    ctx.arc(radius * Math.sin(angle), radius * Math.cos(angle), thickness, 0, 2 * Math.PI);
+                    ctx.arc(radius * Math.sin(Math.PI), radius * Math.cos(Math.PI), thickness, 0, 2 * Math.PI);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                });
+            },
+        });
+
+        var deliveredData = {
+            labels: [
+                "Value"
+            ],
+            datasets: [
+                {
+                    data: [43, 100 - 43],
+                    backgroundColor: [
+                        "#ff7405",
+                        "#e1e1e1"
+                    ],
+                    borderWidth: [
+                        0, 0
+                    ]
+                }]
+        };
+
+        var deliveredOpt = {
+            cutoutPercentage: 88,
+            animation: {
+                animationRotate: true,
+                duration: 1000
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                enabled: false
+            }
+        };
+
+        var chart = new Chart($('#donut-chart'), {
+            type: 'RoundedDoughnut',
+            data: deliveredData,
+            options: deliveredOpt
+        });
+        </script>
+</body>
+</html>
